@@ -54,5 +54,5 @@ if(count($arguments) > 0) {
     }
 }
 
-$generator = new \PhalconModelGenerator\Generator($config);
+$generator = new \PhalconModelGenerator\Generator($config, $configKey);
 $generator->generate();
