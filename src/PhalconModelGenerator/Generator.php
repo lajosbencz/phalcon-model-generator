@@ -29,10 +29,11 @@ class Generator extends Component
         if(!$di) {
             $di = $this->getDI();
             if(!$di) {
-                $di = FactoryDefault::getDefault();
-                if($di) {
-                    $this->setDI($di);
+                $di = FactoryDefault\Cli::getDefault();
+                if(!$di) {
+                    $di = new FactoryDefault\Cli();
                 }
+                $this->setDI($di);
             }
         } else {
             $this->setDI($di);
