@@ -28,6 +28,7 @@ if(in_array('help', $arguments) || in_array('--help', $arguments) || in_array('-
     echo 'Usage:', PHP_EOL;
     echo 'vendor\\bin\\model-generate [config file path (config.php)] [config key (model_generator)]', PHP_EOL;
     echo '', PHP_EOL;
+    exit;
 }
 
 /** @var \Phalcon\Config $config */
