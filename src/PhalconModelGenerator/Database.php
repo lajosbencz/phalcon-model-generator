@@ -52,8 +52,10 @@ class Database
             if (isset($this->_references[$tn])) {
                 foreach ($this->_references[$tn] as $tc => $refs) {
                     $tcn = preg_replace('/_id$/', '', $tc);
-                    if(!array_key_exists($tcn, $this->_tables)) {
-                        continue;
+                    foreach($refs as $rt => $refCols) {
+                        if(!array_key_exists($rt, $this->_tables)) {
+                            continue 2;
+                        }
                     }
                     $an = Text::camelize($tcn);
                     foreach ($refs as $rt => $refCols) {
@@ -66,8 +68,10 @@ class Database
             foreach ($this->_references as $rt => $refCols) {
                 foreach ($refCols as $rc => $refs) {
                     $rcn = preg_replace('/_id$/', '', $rc);
-                    if(!array_key_exists($rcn, $this->_tables)) {
-                        continue;
+                    foreach($refs as $rt => $refCols) {
+                        if(!array_key_exists($rt, $this->_tables)) {
+                            continue 2;
+                        }
                     }
                     $an = Text::camelize($rcn);
                     if (isset($refs[$tn])) {
