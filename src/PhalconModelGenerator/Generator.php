@@ -31,7 +31,7 @@ class Generator extends Component
         }
         foreach(['directory','namespace','namespace_auto','base_model','base_view','reusable','log'] as $k) {
             if(!$config->{$this->_configKey}->offsetExists($k)) {
-                throw new Exception('missing config key: generator.'.$k);
+                throw new Exception('missing config key: '.$configKey.'.'.$k);
             }
         }
 
