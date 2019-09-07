@@ -34,12 +34,19 @@ $config = new \Phalcon\Config([
         'dbname' => 'test_models',
     ],
     'model_generator' => [
+        // path to namespace root (will be created)
         'directory' => __DIR__,
+        // namespace extensible for models
         'namespace' => 'TestModels',
+        // namespace for overwritten models
         'namespace_auto' => 'TestModels\Auto',
+        // models will inherit from this base class
         'base_model' => \Phalcon\Mvc\Model::class,
+        // views will inherit from this base class
         'base_view' => \Phalcon\Mvc\Model::class,
+        // reusable relation parameter
         'reusable' => false,
+        // logging: false for off, true for stdout, string for logging to stream
         'log' => true,
         // ignored tables (as they appear in database)
         'blacklist' => [],
