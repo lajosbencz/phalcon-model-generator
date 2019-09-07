@@ -73,6 +73,11 @@ class Generator extends Component
         }
     }
 
+    public function getConfig(): Config
+    {
+        return $this->_config{$this->_configKey};
+    }
+
     public function listTables($schema = null): array
     {
         return $this->db->listTables($schema);
