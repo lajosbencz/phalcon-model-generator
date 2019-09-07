@@ -206,7 +206,7 @@ class Generator extends Component
             foreach ($refs as $rt => $cols) {
                 $alias = Text::camelize($rt);
                 foreach ($cols as $rc => $av) {
-                    $source .= "\t\t\$this->belongsTo('" . $tc . "', \\" . $ns . "\\" . $alias . "::class, '" . $rc . "', ['alias'=>'" . $av . "'" . ($this->config->generator->reusable ? ", 'reusable'=>true" : "") . "]);\n";
+                    $source .= "\t\t\$this->belongsTo('" . $tc . "', \\" . $ns . "\\" . $alias . "::class, '" . $rc . "', ['alias'=>'" . $av . "', 'reusable'=>" . ($this->config->generator->reusable ? 'true' : 'false') . "]);\n";
                 }
             }
         }
@@ -214,7 +214,7 @@ class Generator extends Component
             foreach ($refs as $rt => $cols) {
                 $alias = Text::camelize($rt);
                 foreach ($cols as $rc => $av) {
-                    $source .= "\t\t\$this->hasMany('" . $tc . "', \\" . $ns . "\\" . $alias . "::class, '" . $rc . "', ['alias'=>'" . $av . "'" . ($this->config->generator->reusable ? ", 'reusable'=>true" : "") . "]);\n";
+                    $source .= "\t\t\$this->hasMany('" . $tc . "', \\" . $ns . "\\" . $alias . "::class, '" . $rc . "', ['alias'=>'" . $av . "', 'reusable'=>" . ($this->config->generator->reusable ? 'true' : 'false') . "]);\n";
                 }
             }
         }
