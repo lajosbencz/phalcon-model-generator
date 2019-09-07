@@ -2,7 +2,7 @@
     "name": "lajosbencz/phalcon-model-generator",
     "description": "Generates annotated Phalcon\\Model files from a database",
     "type": "library",
-    "license": "GPLv3",
+    "license": "GPL-3.0-or-later",
     "authors": [
         {
             "name": "Lajos Bencz",
