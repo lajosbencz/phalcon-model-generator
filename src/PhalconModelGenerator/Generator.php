@@ -16,21 +16,16 @@ use Phalcon\Text;
  */
 class Generator extends Component
 {
-    public static function namespaceToPath(string $dir, string $namespace)
-    {
-        return $dir . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $namespace) . DIRECTORY_SEPARATOR;
-    }
-
     protected $config;
 
-    public function __construct(Config $config, DiInterface $di=null)
+    public function __construct(Config $config, DiInterface $di = null)
     {
         $this->config = $config;
-        if(!$di) {
+        if (!$di) {
             $di = $this->getDI();
-            if(!$di) {
+            if (!$di) {
                 $di = FactoryDefault\Cli::getDefault();
-                if(!$di) {
+                if (!$di) {
                     $di = new FactoryDefault\Cli();
                 }
                 $this->setDI($di);
@@ -42,44 +37,44 @@ class Generator extends Component
             $db = new Mysql($config->database->toArray());
             return $db;
         });
-        $di->setShared('log', function() {
+        $di->setShared('log', function () {
             $logger = new Logger\Multiple();
             $logger->push(new Logger\Adapter\Stream("php://stdout"));
             return $logger;
         });
     }
 
-    public function listTables($schema=null): array
+    public function listTables($schema = null): array
     {
         return $this->db->listTables($schema);
     }
 
-    public function tableExists(string $table, $schema=null): bool
+    public function tableExists(string $table, $schema = null): bool
     {
         return $this->db->tableExists($table, $schema);
     }
 
-    public function listViews($schema=null): array
+    public function listViews($schema = null): array
     {
         return $this->db->listViews($schema);
     }
 
-    public function viewExists(string $view, $schema=null): bool
+    public function viewExists(string $view, $schema = null): bool
     {
         return $this->db->viewExists($view, $schema);
     }
 
-    public function describeColumns(string $table, $schema=null): array
+    public function describeColumns(string $table, $schema = null): array
     {
         return $this->db->describeColumns($table, $schema);
     }
 
-    public function describeIndexes(string $table, $schema=null): array
+    public function describeIndexes(string $table, $schema = null): array
     {
         return $this->db->describeIndexes($table, $schema);
     }
 
-    public function describeReferences(string $table, $schema=null): array
+    public function describeReferences(string $table, $schema = null): array
     {
         return $this->db->describeReferences($table, $schema);
     }
@@ -102,7 +97,7 @@ class Generator extends Component
                 } else {
                     //$use = "use " . $autoNS . " as Base" . $cn . ";\n\n";
                     //$extNS = "Base" . $cn;
-                    $extNS = '\\'.$autoNS.$cn;
+                    $extNS = '\\' . $autoNS . $cn;
                 }
                 file_put_contents($childPath,
                     "<?php\n\n" .
@@ -123,7 +118,7 @@ class Generator extends Component
         $name = Text::camelize($n);
         $file = self::namespaceToPath($this->config->generator->directory, $this->config->generator->namespace_auto) . $name . '.php';
         $dir = dirname($file);
-        if(!is_dir($dir)) {
+        if (!is_dir($dir)) {
             mkdir($dir, 0774, true);
         }
         $ns = $this->config->generator->namespace_auto;
@@ -141,6 +136,11 @@ class Generator extends Component
         $source .= $this->_sourceFind($table) . "\n";
         $source .= "}\n";
         file_put_contents($file, $source);
+    }
+
+    public static function namespaceToPath(string $dir, string $namespace)
+    {
+        return $dir . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $namespace) . DIRECTORY_SEPARATOR;
     }
 
     protected function _sourceProperties(Table $table)

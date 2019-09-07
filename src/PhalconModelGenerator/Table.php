@@ -3,8 +3,6 @@
 namespace PhalconModelGenerator;
 
 use Phalcon\Db;
-use Phalcon\Di\FactoryDefault;
-use Phalcon\DiInterface;
 
 class Table
 {
@@ -36,11 +34,6 @@ class Table
         }
     }
 
-    public function getDatabase()
-    {
-        return $this->_database;
-    }
-
     public function getName()
     {
         return $this->_name;
@@ -49,6 +42,11 @@ class Table
     public function isView()
     {
         return $this->getDatabase()->getGenerator()->viewExists($this->getName());
+    }
+
+    public function getDatabase()
+    {
+        return $this->_database;
     }
 
     public function columns()

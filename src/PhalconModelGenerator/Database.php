@@ -2,7 +2,6 @@
 
 namespace PhalconModelGenerator;
 
-use Phalcon\DiInterface;
 use Phalcon\Text;
 
 class Database
@@ -22,16 +21,6 @@ class Database
         $this->generator = $generator;
         $this->name = $name;
         $this->initialize();
-    }
-
-    public function getGenerator(): Generator
-    {
-        return $this->generator;
-    }
-
-    public function getName()
-    {
-        return $this->name;
     }
 
     public function initialize()
@@ -93,6 +82,21 @@ class Database
 
     }
 
+    public function tables()
+    {
+        return $this->_tables;
+    }
+
+    public function getGenerator(): Generator
+    {
+        return $this->generator;
+    }
+
+    public function getName()
+    {
+        return $this->name;
+    }
+
     public function listBelongsTo(string $table): array
     {
         if (isset($this->_belongsTo[$table])) {
@@ -107,11 +111,6 @@ class Database
             return $this->_hasMany[$table];
         }
         return [];
-    }
-
-    public function tables()
-    {
-        return $this->_tables;
     }
 
     public function column($table, $column)

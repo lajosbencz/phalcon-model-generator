@@ -3,8 +3,6 @@
 namespace PhalconModelGenerator;
 
 use Phalcon\Db;
-use Phalcon\Di\FactoryDefault;
-use Phalcon\DiInterface;
 
 class Column
 {
