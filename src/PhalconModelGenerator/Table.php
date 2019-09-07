@@ -17,6 +17,8 @@ class Table
 
     public function __construct(Database $database, string $name)
     {
+        $database->getGenerator()->log->debug('Describing table: ' . $name);
+
         $this->_database = $database;
         $this->_name = $name;
 
