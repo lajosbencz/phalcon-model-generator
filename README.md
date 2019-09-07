@@ -41,6 +41,8 @@ $config = new \Phalcon\Config([
         'base_view' => \Phalcon\Mvc\Model::class,
         'reusable' => false,
         'log' => true,
+        // ignored tables (as they appear in database)
+        'blacklist' => [],
     ],
 ]);
 

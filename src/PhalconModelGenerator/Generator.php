@@ -118,11 +118,11 @@ class Generator extends Component
         $database = new Database($this, (string)$this->_config->database->dbname);
         foreach ($database->tables() as $t) {
             $cn = Text::camelize($t->getName());
-            $this->log->debug('Generating auto for ' . $cn);
+            $this->log->info('Generating ' . $cn);
             $this->_sourceWrite($t);
             $childPath = self::namespaceToPath($this->_config->{$this->_configKey}->directory, $this->_config->{$this->_configKey}->namespace) . $cn . '.php';
             if (!is_file($childPath)) {
-                $this->log->debug('Generating child for ' . $cn);
+                $this->log->info('Creating child for ' . $cn);
                 $autoNS = $this->_config->{$this->_configKey}->namespace_auto;
                 $childNS = $this->_config->{$this->_configKey}->namespace;
                 if (strpos($autoNS, $childNS) === 0) {

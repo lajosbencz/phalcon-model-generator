@@ -25,7 +25,15 @@ class Database
 
     public function initialize()
     {
+        $config = $this->getGenerator()->getConfig();
+        $blacklist = [];
+        if($config->offsetExists('blacklist')) {
+            $blacklist = (array)$config->blacklist;
+        }
         foreach ($this->generator->listTables() as $table) {
+            if(in_array($table, $blacklist)) {
+                continue;
+            }
             $this->_tables[$table] = new Table($this, $table);
         }
 
@@ -43,7 +51,11 @@ class Database
             $tn = $t->getName();
             if (isset($this->_references[$tn])) {
                 foreach ($this->_references[$tn] as $tc => $refs) {
-                    $an = Text::camelize(preg_replace('/_id$/', '', $tc));
+                    $tcn = preg_replace('/_id$/', '', $tc);
+                    if(!array_key_exists($tcn, $this->_tables)) {
+                        continue;
+                    }
+                    $an = Text::camelize($tcn);
                     foreach ($refs as $rt => $refCols) {
                         foreach ($refCols as $rc => $true) {
                             $this->_belongsTo[$tn][$tc][$rt][$rc] = $an;
@@ -53,7 +65,11 @@ class Database
             }
             foreach ($this->_references as $rt => $refCols) {
                 foreach ($refCols as $rc => $refs) {
-                    $an = Text::camelize(preg_replace('/_id$/', '', $rc));
+                    $rcn = preg_replace('/_id$/', '', $rc);
+                    if(!array_key_exists($rcn, $this->_tables)) {
+                        continue;
+                    }
+                    $an = Text::camelize($rcn);
                     if (isset($refs[$tn])) {
                         foreach ($refs[$tn] as $tc => $true) {
                             $this->_hasMany[$tn][$tc][$rt][$rc] = $an;
