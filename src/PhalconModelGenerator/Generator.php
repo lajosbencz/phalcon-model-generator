@@ -16,11 +16,39 @@ use Phalcon\Text;
  */
 class Generator extends Component
 {
-    protected $config;
+    const DEFAULT_CONFIG_KEY = 'model_generator';
 
-    public function __construct(Config $config, DiInterface $di = null)
+    protected $_config;
+    protected $_configKey;
+
+    public function __construct(Config $config, string $configKey=null, DiInterface $di = null)
     {
-        $this->config = $config;
+        $this->_config = $config;
+        $this->_configKey = $configKey ? : self::DEFAULT_CONFIG_KEY;
+        if(!$config->offsetExists('database')) {
+            throw new Exception('missing config key: database');
+        }
+        if(!$config->offsetExists($configKey)) {
+            throw new Exception('missing config key: '.$configKey);
+        }
+        if(!$config->{$this->_configKey}->offsetExists('directory')) {
+            throw new Exception('missing config key: generator.directory');
+        }
+        if(!$config->{$this->_configKey}->offsetExists('namespace')) {
+            throw new Exception('missing config key: generator.namespace');
+        }
+        if(!$config->{$this->_configKey}->offsetExists('namespace_auto')) {
+            throw new Exception('missing config key: generator.namespace_auto');
+        }
+        if(!$config->{$this->_configKey}->offsetExists('base_model')) {
+            throw new Exception('missing config key: generator.base_model');
+        }
+        if(!$config->{$this->_configKey}->offsetExists('base_view')) {
+            throw new Exception('missing config key: generator.base_view');
+        }
+        if(!$config->{$this->_configKey}->offsetExists('reusable')) {
+            throw new Exception('missing config key: generator.reusable');
+        }
         if (!$di) {
             $di = $this->getDI();
             if (!$di) {
@@ -81,16 +109,16 @@ class Generator extends Component
 
     public function generate()
     {
-        $database = new Database($this, (string)$this->config->database->dbname);
+        $database = new Database($this, (string)$this->_config->database->dbname);
         foreach ($database->tables() as $t) {
             $cn = Text::camelize($t->getName());
             $this->log->debug('Generating auto for ' . $cn);
             $this->_sourceWrite($t);
-            $childPath = self::namespaceToPath($this->config->generator->directory, $this->config->generator->namespace) . $cn . '.php';
+            $childPath = self::namespaceToPath($this->_config->{$this->_configKey}->directory, $this->_config->{$this->_configKey}->namespace) . $cn . '.php';
             if (!is_file($childPath)) {
                 $this->log->debug('Generating child for ' . $cn);
-                $autoNS = $this->config->generator->namespace_auto;
-                $childNS = $this->config->generator->namespace;
+                $autoNS = $this->_config->{$this->_configKey}->namespace_auto;
+                $childNS = $this->_config->{$this->_configKey}->namespace;
                 if (strpos($autoNS, $childNS) === 0) {
                     $use = "";
                     $extNS = substr($autoNS, strlen($childNS) + 1) . "\\" . $cn;
@@ -116,13 +144,13 @@ class Generator extends Component
     {
         $n = $table->getName();
         $name = Text::camelize($n);
-        $file = self::namespaceToPath($this->config->generator->directory, $this->config->generator->namespace_auto) . $name . '.php';
+        $file = self::namespaceToPath($this->_config->{$this->_configKey}->directory, $this->_config->{$this->_configKey}->namespace_auto) . $name . '.php';
         $dir = dirname($file);
         if (!is_dir($dir)) {
             mkdir($dir, 0774, true);
         }
-        $ns = $this->config->generator->namespace_auto;
-        $ex = $table->isView() ? $this->config->generator->base_view : $this->config->generator->base_model;
+        $ns = $this->_config->{$this->_configKey}->namespace_auto;
+        $ex = $table->isView() ? $this->_config->{$this->_configKey}->base_view : $this->_config->{$this->_configKey}->base_model;
         //dump($file); return;
         $source = "<?php\n\nnamespace " . $ns . ";\n\n";
         //$source .= "use " . $ex . " as BaseModel;\n\n";
@@ -147,7 +175,7 @@ class Generator extends Component
     {
         $database = $table->getDatabase();
         $tn = $table->getName();
-        $ns = $this->config->generator->namespace;
+        $ns = $this->_config->{$this->_configKey}->namespace;
         $source = "";
         $source .= "/**\n";
         foreach ($database->listBelongsTo($tn) as $t2) {
@@ -193,6 +221,7 @@ class Generator extends Component
 
     protected function _sourceInitialize(Table $table)
     {
+        $reusable = $this->_config->{$this->_configKey}->reusable ? 'true' : 'false';
         $database = $table->getDatabase();
         $source = "";
         $source .= "\t/**\n";
@@ -201,12 +230,12 @@ class Generator extends Component
         $source .= "\tpublic function initialize() {\n";
         $source .= "\t\tparent::initialize();\n";
         $tn = $table->getName();
-        $ns = $this->config->generator->namespace;
+        $ns = $this->_config->{$this->_configKey}->namespace;
         foreach ($database->listBelongsTo($tn) as $tc => $refs) {
             foreach ($refs as $rt => $cols) {
                 $alias = Text::camelize($rt);
                 foreach ($cols as $rc => $av) {
-                    $source .= "\t\t\$this->belongsTo('" . $tc . "', \\" . $ns . "\\" . $alias . "::class, '" . $rc . "', ['alias'=>'" . $av . "', 'reusable'=>" . ($this->config->generator->reusable ? 'true' : 'false') . "]);\n";
+                    $source .= "\t\t\$this->belongsTo('" . $tc . "', \\" . $ns . "\\" . $alias . "::class, '" . $rc . "', ['alias'=>'" . $av . "', 'reusable'=>" . $reusable . "]);\n";
                 }
             }
         }
@@ -214,7 +243,7 @@ class Generator extends Component
             foreach ($refs as $rt => $cols) {
                 $alias = Text::camelize($rt);
                 foreach ($cols as $rc => $av) {
-                    $source .= "\t\t\$this->hasMany('" . $tc . "', \\" . $ns . "\\" . $alias . "::class, '" . $rc . "', ['alias'=>'" . $av . "', 'reusable'=>" . ($this->config->generator->reusable ? 'true' : 'false') . "]);\n";
+                    $source .= "\t\t\$this->hasMany('" . $tc . "', \\" . $ns . "\\" . $alias . "::class, '" . $rc . "', ['alias'=>'" . $av . "', 'reusable'=>" . $reusable . "]);\n";
                 }
             }
         }
@@ -261,7 +290,7 @@ class Generator extends Component
 
     protected function _sourceFind(Table $table)
     {
-        $hint = '\\' . $this->config->generator->namespace . '\\' . Text::camelize($table->getName());
+        $hint = '\\' . $this->_config->{$this->_configKey}->namespace . '\\' . Text::camelize($table->getName());
         $source = "";
         $source .= "\t/**\n";
         $source .= "\t * @param mixed \$parameters (optional)\n";
