@@ -36,7 +36,6 @@ class Database
 
     public function initialize()
     {
-        $this->generator->db->execute("SELECT {$this->name}");
         foreach ($this->generator->listTables() as $table) {
             $this->_tables[$table] = new Table($this, $table);
         }
