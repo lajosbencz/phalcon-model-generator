@@ -26,7 +26,7 @@ $relScriptPath = array_unshift($arguments);
 if(in_array('help', $arguments) || in_array('--help', $arguments) || in_array('-h', $arguments)) {
     echo '', PHP_EOL;
     echo 'Usage:', PHP_EOL;
-    echo 'model-generate.php [config file path (config.php)] [config key (model_generator)]', PHP_EOL;
+    echo 'model-generate.php [global config file path (config.php)] [generator config root key (model_generator)]', PHP_EOL;
     echo '', PHP_EOL;
     exit;
 }
