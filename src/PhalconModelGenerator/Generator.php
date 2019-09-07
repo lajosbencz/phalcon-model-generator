@@ -5,7 +5,6 @@ namespace PhalconModelGenerator;
 
 use Phalcon\Config;
 use Phalcon\Db\Adapter\Pdo\Factory;
-use Phalcon\Db\Adapter\Pdo\Mysql;
 use Phalcon\Di\FactoryDefault;
 use Phalcon\DiInterface;
 use Phalcon\Logger;
@@ -22,18 +21,18 @@ class Generator extends Component
     protected $_config;
     protected $_configKey;
 
-    public function __construct(Config $config, string $configKey=null, DiInterface $di = null)
+    public function __construct(Config $config, string $configKey = null, DiInterface $di = null)
     {
         $this->_config = $config;
         $configKey = $configKey ?? self::DEFAULT_CONFIG_KEY;
         $this->_configKey = $configKey;
 
-        if(!$config->offsetExists($configKey)) {
-            throw new Exception('missing config key: '.$configKey);
+        if (!$config->offsetExists($configKey)) {
+            throw new Exception('missing config key: ' . $configKey);
         }
-        foreach(['directory','namespace','namespace_auto','base_model','base_view','reusable','log'] as $k) {
-            if(!$config->{$this->_configKey}->offsetExists($k)) {
-                throw new Exception('missing config key: '.$configKey.'.'.$k);
+        foreach (['directory', 'namespace', 'namespace_auto', 'base_model', 'base_view', 'reusable', 'log'] as $k) {
+            if (!$config->{$this->_configKey}->offsetExists($k)) {
+                throw new Exception('missing config key: ' . $configKey . '.' . $k);
             }
         }
 
@@ -50,8 +49,8 @@ class Generator extends Component
             $this->setDI($di);
         }
 
-        if(!$di->has('db')) {
-            if(!$config->offsetExists('database')) {
+        if (!$di->has('db')) {
+            if (!$config->offsetExists('database')) {
                 throw new Exception('missing config key: database');
             }
             $di->setShared('db', function () use ($config) {
@@ -59,7 +58,7 @@ class Generator extends Component
             });
         }
 
-        if(!$di->has('log')) {
+        if (!$di->has('log')) {
             $di->setShared('log', function () use ($config, $configKey) {
                 $logger = new Logger\Multiple();
                 $log = $config->{$configKey}->log;

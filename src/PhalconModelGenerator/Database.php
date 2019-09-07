@@ -27,11 +27,11 @@ class Database
     {
         $config = $this->getGenerator()->getConfig();
         $blacklist = [];
-        if($config->offsetExists('blacklist')) {
+        if ($config->offsetExists('blacklist')) {
             $blacklist = (array)$config->blacklist;
         }
         foreach ($this->generator->listTables() as $table) {
-            if(in_array($table, $blacklist)) {
+            if (in_array($table, $blacklist)) {
                 continue;
             }
             $this->_tables[$table] = new Table($this, $table);
@@ -52,8 +52,8 @@ class Database
             if (isset($this->_references[$tn])) {
                 foreach ($this->_references[$tn] as $tc => $refs) {
                     $tcn = preg_replace('/_id$/', '', $tc);
-                    foreach($refs as $rt => $refCols) {
-                        if(!array_key_exists($rt, $this->_tables)) {
+                    foreach ($refs as $rt => $refCols) {
+                        if (!array_key_exists($rt, $this->_tables)) {
                             continue 2;
                         }
                     }
@@ -68,8 +68,8 @@ class Database
             foreach ($this->_references as $rt => $refCols) {
                 foreach ($refCols as $rc => $refs) {
                     $rcn = preg_replace('/_id$/', '', $rc);
-                    foreach($refs as $rt => $refCols) {
-                        if(!array_key_exists($rt, $this->_tables)) {
+                    foreach ($refs as $rt => $refCols) {
+                        if (!array_key_exists($rt, $this->_tables)) {
                             continue 2;
                         }
                     }
@@ -102,14 +102,14 @@ class Database
 
     }
 
-    public function tables()
-    {
-        return $this->_tables;
-    }
-
     public function getGenerator(): Generator
     {
         return $this->generator;
+    }
+
+    public function tables()
+    {
+        return $this->_tables;
     }
 
     public function getName()
