@@ -18,7 +18,7 @@ class Generator extends Component
 {
     public static function namespaceToPath(string $dir, string $namespace)
     {
-        return realpath($dir) . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $namespace) . DIRECTORY_SEPARATOR;
+        return $dir . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $namespace) . DIRECTORY_SEPARATOR;
     }
 
     protected $config;
@@ -86,12 +86,12 @@ class Generator extends Component
 
     public function generate()
     {
-        $database = new Database($this, (string)$this->config->generator->database);
+        $database = new Database($this, (string)$this->config->database->dbname);
         foreach ($database->tables() as $t) {
             $cn = Text::camelize($t->getName());
             $this->log->debug('Generating auto for ' . $cn);
             $this->_sourceWrite($t);
-            $childPath = self::namespaceToPath($this->config->generator->diretory, $this->config->generator->namespace) . $cn . '.php';
+            $childPath = self::namespaceToPath($this->config->generator->directory, $this->config->generator->namespace) . $cn . '.php';
             if (!is_file($childPath)) {
                 $this->log->debug('Generating child for ' . $cn);
                 $autoNS = $this->config->generator->namespace_auto;
@@ -100,8 +100,9 @@ class Generator extends Component
                     $use = "";
                     $extNS = substr($autoNS, strlen($childNS) + 1) . "\\" . $cn;
                 } else {
-                    $use = "use " . $autoNS . " as Base" . $cn . ";\n\n";
-                    $extNS = "Base" . $cn;
+                    //$use = "use " . $autoNS . " as Base" . $cn . ";\n\n";
+                    //$extNS = "Base" . $cn;
+                    $extNS = '\\'.$autoNS.$cn;
                 }
                 file_put_contents($childPath,
                     "<?php\n\n" .
@@ -120,14 +121,18 @@ class Generator extends Component
     {
         $n = $table->getName();
         $name = Text::camelize($n);
-        $file = self::namespaceToPath($this->config->generator->diretory, $this->config->generator->namespace_auto) . $name . '.php';
+        $file = self::namespaceToPath($this->config->generator->directory, $this->config->generator->namespace_auto) . $name . '.php';
+        $dir = dirname($file);
+        if(!is_dir($dir)) {
+            mkdir($dir, 0774, true);
+        }
         $ns = $this->config->generator->namespace_auto;
         $ex = $table->isView() ? $this->config->generator->base_view : $this->config->generator->base_model;
         //dump($file); return;
         $source = "<?php\n\nnamespace " . $ns . ";\n\n";
-        $source .= "use " . $ex . " as Base;\n\n";
+        //$source .= "use " . $ex . " as BaseModel;\n\n";
         $source .= $this->_sourceProperties($table) . "\n";
-        $source .= "abstract class " . $name . " extends Base\n";
+        $source .= "abstract class " . $name . " extends \\$ex\n";
         $source .= "{\n";
         $source .= $this->_sourceTable($table) . "\n";
         $source .= $this->_sourceColumnMap($table) . "\n";

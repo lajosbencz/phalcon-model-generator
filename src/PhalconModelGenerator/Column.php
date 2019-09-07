@@ -22,10 +22,7 @@ class Column
         $this->_table = $table;
         $this->_name = $column->getName();
         $this->_data = $column;
-    }
 
-    public function initialize()
-    {
         $this->_array = [
             'name' => $this->_data->getName(),
             'ai' => $this->_data->isAutoIncrement(),
