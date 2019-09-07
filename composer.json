@@ -19,5 +19,5 @@
             "PhalconModelGenerator\\": "src/PhalconModelGenerator"
         }
     },
-    "bin": ["bin/generate.php"]
+    "bin": ["bin/model-generate.php"]
 }
