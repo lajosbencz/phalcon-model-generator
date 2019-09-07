@@ -30,7 +30,9 @@ class Generator extends Component
             $di = $this->getDI();
             if(!$di) {
                 $di = FactoryDefault::getDefault();
-                $this->setDI($di);
+                if($di) {
+                    $this->setDI($di);
+                }
             }
         } else {
             $this->setDI($di);
