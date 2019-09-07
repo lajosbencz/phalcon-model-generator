@@ -24,7 +24,8 @@ class Generator extends Component
     public function __construct(Config $config, string $configKey=null, DiInterface $di = null)
     {
         $this->_config = $config;
-        $this->_configKey = $configKey ? : self::DEFAULT_CONFIG_KEY;
+        $configKey = $configKey ?? self::DEFAULT_CONFIG_KEY;
+        $this->_configKey = $configKey;
 
         if(!$config->offsetExists($configKey)) {
             throw new Exception('missing config key: '.$configKey);
