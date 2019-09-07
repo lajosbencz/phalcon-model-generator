@@ -25,30 +25,16 @@ class Generator extends Component
     {
         $this->_config = $config;
         $this->_configKey = $configKey ? : self::DEFAULT_CONFIG_KEY;
-        if(!$config->offsetExists('database')) {
-            throw new Exception('missing config key: database');
-        }
+
         if(!$config->offsetExists($configKey)) {
             throw new Exception('missing config key: '.$configKey);
         }
-        if(!$config->{$this->_configKey}->offsetExists('directory')) {
-            throw new Exception('missing config key: generator.directory');
+        foreach(['directory','namespace','namespace_auto','base_model','base_view','reusable','log'] as $k) {
+            if(!$config->{$this->_configKey}->offsetExists($k)) {
+                throw new Exception('missing config key: generator.'.$k);
+            }
         }
-        if(!$config->{$this->_configKey}->offsetExists('namespace')) {
-            throw new Exception('missing config key: generator.namespace');
-        }
-        if(!$config->{$this->_configKey}->offsetExists('namespace_auto')) {
-            throw new Exception('missing config key: generator.namespace_auto');
-        }
-        if(!$config->{$this->_configKey}->offsetExists('base_model')) {
-            throw new Exception('missing config key: generator.base_model');
-        }
-        if(!$config->{$this->_configKey}->offsetExists('base_view')) {
-            throw new Exception('missing config key: generator.base_view');
-        }
-        if(!$config->{$this->_configKey}->offsetExists('reusable')) {
-            throw new Exception('missing config key: generator.reusable');
-        }
+
         if (!$di) {
             $di = $this->getDI();
             if (!$di) {
@@ -61,15 +47,29 @@ class Generator extends Component
         } else {
             $this->setDI($di);
         }
-        $di->setShared('db', function () use ($config) {
-            $db = new Mysql($config->database->toArray());
-            return $db;
-        });
-        $di->setShared('log', function () {
-            $logger = new Logger\Multiple();
-            $logger->push(new Logger\Adapter\Stream("php://stdout"));
-            return $logger;
-        });
+
+        if(!$di->has('db')) {
+            if(!$config->offsetExists('database')) {
+                throw new Exception('missing config key: database');
+            }
+            $di->setShared('db', function () use ($config) {
+                $db = new Mysql($config->database->toArray());
+                return $db;
+            });
+        }
+
+        if(!$di->has('log')) {
+            $di->setShared('log', function () use ($config, $configKey) {
+                $logger = new Logger\Multiple();
+                $log = $config->{$configKey}->log;
+                if (is_string($log)) {
+                    $logger->push(new Logger\Adapter\Stream($log));
+                } elseif ($log) {
+                    $logger->push(new Logger\Adapter\Stream("php://stdout"));
+                }
+                return $logger;
+            });
+        }
     }
 
     public function listTables($schema = null): array
