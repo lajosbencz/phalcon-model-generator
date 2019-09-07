@@ -4,6 +4,7 @@ namespace PhalconModelGenerator;
 
 
 use Phalcon\Config;
+use Phalcon\Db\Adapter\Pdo\Factory;
 use Phalcon\Db\Adapter\Pdo\Mysql;
 use Phalcon\Di\FactoryDefault;
 use Phalcon\DiInterface;
@@ -54,8 +55,7 @@ class Generator extends Component
                 throw new Exception('missing config key: database');
             }
             $di->setShared('db', function () use ($config) {
-                $db = new Mysql($config->database->toArray());
-                return $db;
+                return Factory::load($config->database);
             });
         }
 
