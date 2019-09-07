@@ -21,7 +21,7 @@ if(!$loaded) {
 
 
 $arguments = $argv;
-$relScriptPath = array_unshift($arguments);
+$relScriptPath = array_shift($arguments);
 
 if(in_array('help', $arguments) || in_array('--help', $arguments) || in_array('-h', $arguments)) {
     echo '', PHP_EOL;
@@ -34,7 +34,7 @@ if(in_array('help', $arguments) || in_array('--help', $arguments) || in_array('-
 /** @var \Phalcon\Config $config */
 $config = null;
 if(count($arguments)>0) {
-    $cfgPath = array_unshift($arguments);
+    $cfgPath = array_shift($arguments);
     if(is_readable($cfgPath)) {
         $cfgPath = realpath($cfgPath);
         $config = require_once $cfgPath;
