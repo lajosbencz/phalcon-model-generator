@@ -10,7 +10,7 @@ composer require lajosbencz/phalcon-model-generator
 
 ### Use from terminal
 
-Parameters are options, first is path to config, second is config key of generator.
+Parameters are optional, first is path to global app config, second is root key of generator config inside the global.
 
 ```bash
 vendor/bin/model-generate.php
