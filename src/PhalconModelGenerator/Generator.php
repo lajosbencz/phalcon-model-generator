@@ -125,7 +125,7 @@ class Generator extends Component
                 $autoNS = $this->_config->{$this->_configKey}->namespace_auto;
                 $childNS = $this->_config->{$this->_configKey}->namespace;
                 if (strpos($autoNS, $childNS) === 0) {
-                    $use = "";
+                    //$use = "";
                     $extNS = substr($autoNS, strlen($childNS) + 1) . "\\" . $cn;
                 } else {
                     //$use = "use " . $autoNS . " as Base" . $cn . ";\n\n";
@@ -135,7 +135,7 @@ class Generator extends Component
                 file_put_contents($childPath,
                     "<?php\n\n" .
                     "namespace " . $childNS . ";\n\n" .
-                    $use .
+                    // $use . "\n\n" .
                     "/** {@inheritdoc} */\n" .
                     "class " . $cn . " extends " . $extNS . "\n" .
                     "{\n" .
