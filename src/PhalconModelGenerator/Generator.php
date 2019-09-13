@@ -134,9 +134,9 @@ class Generator extends Component
                 }
                 file_put_contents($childPath,
                     "<?php\n\n" .
-                    "/** {@inheritdoc} */\n" .
                     "namespace " . $childNS . ";\n\n" .
                     $use .
+                    "/** {@inheritdoc} */\n" .
                     "class " . $cn . " extends " . $extNS . "\n" .
                     "{\n" .
                     "}\n"
