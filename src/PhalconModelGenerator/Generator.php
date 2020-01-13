@@ -173,7 +173,7 @@ class Generator extends Component
 
     public static function namespaceToPath(string $dir, string $namespace)
     {
-        return $dir . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $namespace) . DIRECTORY_SEPARATOR;
+        return $dir . DIRECTORY_SEPARATOR . str_replace(['/','\\'], DIRECTORY_SEPARATOR, $namespace) . DIRECTORY_SEPARATOR;
     }
 
     protected function _sourceProperties(Table $table)
