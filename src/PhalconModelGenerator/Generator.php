@@ -130,7 +130,7 @@ class Generator extends Component
                 } else {
                     //$use = "use " . $autoNS . " as Base" . $cn . ";\n\n";
                     //$extNS = "Base" . $cn;
-                    $extNS = '\\' . $autoNS . $cn;
+                    $extNS = str_replace('\\\\', '\\', '\\' . $autoNS . '\\' . $cn);
                 }
                 $dir = dirname($childPath);
                 if (!is_dir($dir)) {
