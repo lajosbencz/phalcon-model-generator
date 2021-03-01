@@ -132,6 +132,10 @@ class Generator extends Component
                     //$extNS = "Base" . $cn;
                     $extNS = '\\' . $autoNS . $cn;
                 }
+                $dir = dirname($childPath);
+                if (!is_dir($dir)) {
+                    mkdir($dir, 0774, true);
+                }
                 file_put_contents($childPath,
                     "<?php\n\n" .
                     "namespace " . $childNS . ";\n\n" .
